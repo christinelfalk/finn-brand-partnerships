@@ -1,0 +1,30 @@
+'use client';
+import { useMemo, useState } from 'react';
+
+const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+
+export default function SponsorSite({ content }) {
+  const [goal, setGoal] = useState('');
+  const [matcher, setMatcher] = useState({});
+  const matcherQuestions = [
+    { q: 'What matters most to your brand?', options: ['Reach a fight audience', 'Create authentic content', 'Build a long-term ambassador'] },
+    { q: 'How do you want to show up?', options: ['Own a big fight-night moment', 'Be part of the full fight camp', 'Build an ongoing partnership'] },
+    { q: 'What kind of relationship are you looking for?', options: ['A focused activation', 'A campaign with multiple touchpoints', 'A long-term brand relationship'] }
+  ];
+  const matcherCount = Object.keys(matcher).length;
+  const [tier, setTier] = useState(content.tiers?.[1] || content.tiers?.[0]);
+  const [selected, setSelected] = useState(() => Object.fromEntries((content.addOns || []).map(a => [a.name, !!a.defaultSelected])));
+  const total = useMemo(() => (tier?.price || 0) + (content.addOns || []).reduce((s, a) => s + (selected[a.name] ? a.price : 0), 0), [tier, selected, content.addOns]);
+  const submit = e => { e.preventDefault(); const next = new FormData(e.currentTarget).get('next'); alert(next === 'call' ? 'Booking connection coming next.' : 'Secure checkout connection coming next.'); };
+  return <>
+    <header className="nav"><a href="#top" className="wordmark">FINN <span>MARTIN</span></a><nav className="nav-links"><a href="#story">Story</a><a href="#proof">Proof</a><a href="#partner">Partnerships</a></nav><a href="#partner" className="nav-cta">BUILD A PARTNERSHIP</a></header>
+    <main id="top">
+      <section className="hero"><div className="hero-copy"><p className="kicker">{content.hero.kicker}</p><h1>FROM FIGHT CAMP<br/>TO FIGHT NIGHT<br/><span>JOIN THE JOURNEY.</span></h1><p>{content.hero.deck}</p><a href="#partner" className="btn">{content.hero.cta}</a></div><div className="hero-rail">{content.proof.map((p,i)=><div key={i}><b>{p.views}</b><span>featured views</span></div>)}</div></section>
+      <section className="manifesto" id="story"><div className="num">01</div><div><p className="label">THE OPPORTUNITY</p><h2>EVERY FIGHT HAS A STORY.<br/><em>BE PART OF THIS ONE.</em></h2><p>MMA gives brands a real-time narrative with stakes. Every camp creates tension. Every training clip creates context. Every fight creates a payoff. The right partner becomes part of that story — naturally, repeatedly and memorably.</p></div></section>
+      <section id="proof" className="proof"><p className="label">02 / SOCIAL PROOF</p><h2>THE AUDIENCE<br/>IS ALREADY WATCHING.</h2><div className="proof-grid">{content.proof.map((p,i)=><article key={p.views}><div className="proof-placeholder"><b>{p.views}</b></div><small>0{i+1}</small><h3>{p.views} VIEWS</h3><p>{p.caption}</p></article>)}</div></section>
+      <section className="matcher" id="matcher"><p className="label">03 / PARTNERSHIP MATCHER</p><h2>LET’S BUILD THE RIGHT<br/>KIND OF IMPACT.</h2><p>Three quick choices. We’ll point you toward the partnership structure that makes the most sense for your brand.</p><div className="progress">{matcherCount} / 3</div>{matcherQuestions.map((item,qi)=><div className="question" key={item.q}><small>QUESTION {qi+1}</small><h3>{item.q}</h3><div className="options">{item.options.map((option,oi)=><button key={option} className={matcher[qi]===option?'selected':''} onClick={()=>{setMatcher({...matcher,[qi]:option});if(qi===0)setGoal(option)}}><span>{String.fromCharCode(65+oi)}</span>{option}</button>)}</div></div>)}</section>
+      <section className="partner" id="partner"><p className="label">04 / BUILD YOUR PARTNERSHIP</p><h2>MAKE IT <span>YOURS.</span></h2><div className="tiers">{content.tiers.map(t=><button className={tier?.name===t.name?'selected':''} key={t.name} onClick={()=>setTier(t)}><small>{t.label}</small><h3>{t.name}</h3><p>{t.description}</p><b>{fmt(t.price)}</b></button>)}</div><h3>ADD ACTIVATIONS</h3><div className="addons">{content.addOns.map(a=><label key={a.name}><input type="checkbox" checked={!!selected[a.name]} onChange={e=>setSelected({...selected,[a.name]:e.target.checked})}/><span>{a.name}<small>{a.description}</small></span><b>+{fmt(a.price)}</b></label>)}</div><div className="total">CAMPAIGN TOTAL <b>{fmt(total)}</b></div><form onSubmit={submit}><input placeholder="Brand / Company" required/><input placeholder="Your name" required/><input type="email" placeholder="Work email" required/><textarea placeholder="What would make this partnership a win?"/><label><input type="radio" name="next" value="checkout" defaultChecked/> Reserve sponsorship</label><label><input type="radio" name="next" value="call"/> Book partnership call</label><button className="btn">CONTINUE →</button></form></section>
+      <section className="end"><p>THE NEXT FIGHT STARTS NOW</p><h2>YOUR BRAND COULD BE<br/><span>IN FINN’S CORNER.</span></h2><a href="#partner" className="btn light">START A PARTNERSHIP</a></section>
+    </main><footer>FINN MARTIN <span>PARTNERSHIPS · CONTENT · FIGHT WEEK</span><span>© 2026</span></footer>
+  </>;
+}
