@@ -1,4 +1,5 @@
 import './globals.css';
+import './proof-overrides.css';
 
 export const metadata = {
   title: 'FINN MARTIN — Brand Partnerships',
