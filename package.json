@@ -1,0 +1,22 @@
+{
+  "name": "finn-brand-partnerships",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "studio": "sanity dev"
+  },
+  "dependencies": {
+    "@sanity/client": "^7.9.0",
+    "@sanity/vision": "^4.10.0",
+    "next": "^15.5.0",
+    "next-sanity": "^10.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sanity": "^4.10.0",
+    "styled-components": "^6.1.19"
+  },
+  "devDependencies": {}
+}
